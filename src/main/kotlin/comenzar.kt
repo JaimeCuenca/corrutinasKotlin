@@ -6,6 +6,11 @@ import kotlinx.coroutines.sync.Mutex
 val hamaca = Mutex()
 val hacha = Mutex()
 
+const val CUBOS_NECESARIOS = 4
+const val LENA_NECESARIA  = 2
+const val RAMA_NECESARIA  = 1
+const val COMIDA_NECESARIA  = 1
+
 fun comenzar(){
 
     var cubosActuales = 0
@@ -17,12 +22,9 @@ fun comenzar(){
     var cubos = false
     var lena = false
 
-    val CUBOS_NECESARIOS = 4
-    val LENA_NECESARIA  = 2
-    val RAMA_NECESARIA  = 1
-    val COMIDA_NECESARIA  = 1
-
-    println(" ___________________________\n|LLEGAMOS A LA ISLA DESIERTA|\n ---------------------------");
+    println(" ___________________________\n" +
+            "|LLEGAMOS A LA ISLA DESIERTA|" +
+            "\n ---------------------------")
 
 
     GlobalScope.launch {
@@ -32,13 +34,9 @@ fun comenzar(){
                 cubos = true
                 irse(ramas, comida, cubos, lena)
             }else {
-                println("El amigo A va a por agua.")
-                delay(4000)
-                println("El amigo A trae agua.")
+                labor(4000, 'A', "un cubo de agua")
                 cubosActuales++
-                println("El amigo A quiere descansar")
                 descansar(1000, 'A')
-                println("El amigo A ha descansado")
             }
         }
     }
@@ -50,17 +48,11 @@ fun comenzar(){
                 lena = true
                 irse(ramas, comida, cubos, lena)
             }else {
-                println("El amigo B va a por lena.")
-                cogerHacha()
-                println("El amigo B coge el hacha.")
-                delay(5000)
-                println("El amigo B deja el hacha")
-                dejarHacha()
-                println("El amigo B vuelve con la lena")
+                cogerHacha('B')
+                labor(5000, 'B', "leña")
+                dejarHacha('B')
                 lenaActual++
-                println("El amigo B quiere descansar")
                 descansar(3000, 'B')
-                println("El amigo B ha descansado")
             }
         }
     }
@@ -71,9 +63,7 @@ fun comenzar(){
                 ramas = true
                 irse(ramas, comida, cubos, lena)
             } else {
-                println("El amigo C va a por ramas.")
-                delay(3000)
-                println("El amigo C trae ramas.")
+                labor(3000, 'C', "ramas")
                 ramasActuales++
             }
             if (comidaActual == COMIDA_NECESARIA) {
@@ -81,16 +71,19 @@ fun comenzar(){
                 comida = true
                 irse(ramas, comida, cubos, lena)
             } else {
-                cogerHacha()
-                println("El amigo C coge el hacha")
-                println("El amigo C se va a cazar")
-                delay(4000)
-                println("El amigo C vuelve de cazar")
-                dejarHacha()
+                cogerHacha('C')
+                labor(4000, 'C', "comida")
+                dejarHacha('C')
                 comidaActual++
             }
         }
     }
+}
+
+suspend fun labor(tiempo: Long, nombre: Char, objeto: String){
+    println("El amigo $nombre va a por $objeto")
+    delay(tiempo)
+    println("El amigo $nombre trae $objeto")
 }
 
 fun irse(ramas : Boolean, comida: Boolean, cubos: Boolean, lena: Boolean) {
@@ -99,17 +92,22 @@ fun irse(ramas : Boolean, comida: Boolean, cubos: Boolean, lena: Boolean) {
     }
 }
 
-suspend fun cogerHacha(){
+suspend fun cogerHacha(nombre: Char){
     hacha.lock()
+    println("El amigo $nombre coge el hacha")
+
 }
-fun dejarHacha(){
+fun dejarHacha(nombre: Char){
     hacha.unlock()
+    println("El amigo $nombre deja el hacha")
 }
 
 suspend fun descansar(tiempo: Long, nombre: Char) {
+    println("El amigo $nombre quiere descansar")
     hamaca.lock()
-    println("El amigo "+nombre+" se tumba en la hamaca")
+    println("El amigo $nombre se tumba en la hamaca")
     delay(tiempo)
-    println("El amigo "+nombre+" se levanta de la hamaca")
+    println("El amigo $nombre se levanta de la hamaca")
     hamaca.unlock()
+    println("El amigo $nombre ha descansado")
 }
