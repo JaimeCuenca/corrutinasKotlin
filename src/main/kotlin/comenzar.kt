@@ -86,17 +86,12 @@ suspend fun labor(tiempo: Long, nombre: Char, objeto: String){
     println("El amigo $nombre trae $objeto")
 }
 
-fun irse(ramas : Boolean, comida: Boolean, cubos: Boolean, lena: Boolean) {
-    if(ramas && comida && cubos && lena){
-        println("BARCA CONSTRUIDA Y APROVISIONADA CON ÉXITO")
-    }
-}
-
 suspend fun cogerHacha(nombre: Char){
     hacha.lock()
     println("El amigo $nombre coge el hacha")
 
 }
+
 fun dejarHacha(nombre: Char){
     hacha.unlock()
     println("El amigo $nombre deja el hacha")
@@ -110,4 +105,9 @@ suspend fun descansar(tiempo: Long, nombre: Char) {
     println("El amigo $nombre se levanta de la hamaca")
     hamaca.unlock()
     println("El amigo $nombre ha descansado")
+}
+
+fun irse(ramas : Boolean, comida: Boolean, cubos: Boolean, lena: Boolean) {
+    if(ramas && comida && cubos && lena)
+        println("BARCA CONSTRUIDA Y APROVISIONADA CON ÉXITO")
 }
